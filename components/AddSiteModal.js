@@ -1,5 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { mutate } from 'swr';
 import {
   Button,
   FormControl,
@@ -18,21 +19,23 @@ import {
 
 import { CreateSite } from '@lib/db';
 import { useAuth } from '@lib/auth';
+import fetcher from '@utils/fetcher';
 
-const AddSiteModal = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
+const AddSiteModal = ({ children }) => {
   const initialRef = React.useRef();
+  const toast = useToast();
   const auth = useAuth();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { handleSubmit, register, errors } = useForm();
 
   const onCreateSite = ({ name, url }) => {
-    CreateSite({
+    const newSite = {
       authorId: auth.user.uid,
       createdAt: new Date().toISOString(),
       name,
       url
-    });
+    };
+    CreateSite(newSite);
 
     toast({
       title: 'Site created.',
@@ -41,12 +44,29 @@ const AddSiteModal = () => {
       duration: 5000,
       isClosable: true
     });
+
+    mutate(
+      ['/api/sites', auth.user.token],
+      async (data) => {
+        return { sites: [...data.sites, newSite] };
+      },
+      false
+    );
     onClose();
   };
 
   return (
     <>
-      <Button onClick={onOpen}>Add site</Button>
+      <Button
+        onClick={onOpen}
+        backgroundColor="gray.900"
+        color="white"
+        fontWeight="medium"
+        _hover={{ bg: 'gray.t00' }}
+        _active={{ bg: 'gray.800', transform: 'scale(0.95)' }}
+      >
+        {children}
+      </Button>
 
       <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

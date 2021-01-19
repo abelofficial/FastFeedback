@@ -13,17 +13,19 @@ import {
   BreadcrumbLink,
   Heading,
   Text,
-  Button
+  Button,
+  SkeletonCircle
 } from '@chakra-ui/react';
 
 import * as Icons from '@components/icons';
 import { useAuth } from '@lib/auth';
+import AddSiteModal from './AddSiteModal';
 const DashboardShell = ({ children }) => {
   const auth = useAuth();
   const router = useRouter();
 
-  const handleSignOut = () => {
-    auth.signout();
+  const handleSignOut = async () => {
+    await auth.signout();
     router.push('/');
   };
 
@@ -49,7 +51,11 @@ const DashboardShell = ({ children }) => {
           >
             Log Out
           </Button>
-          <Avatar size="sm" src={auth.user?.imgUrl} />
+          {auth.user ? (
+            <Avatar size="sm" src={auth.user?.imgUrl} />
+          ) : (
+            <SkeletonCircle size="10" />
+          )}
         </Stack>
       </Flex>
       <Box backgroundColor="gray.100" width="100%" height="100vh">
@@ -59,9 +65,13 @@ const DashboardShell = ({ children }) => {
               <BreadcrumbLink color="gray.500">Sites</BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
-          <Heading size="xl" mb={8}>
-            My Sites
-          </Heading>
+          <Flex direction="row" justify="space-between">
+            <Heading size="xl" mb={8} display="inline">
+              My Sites
+            </Heading>
+            <AddSiteModal> Add site </AddSiteModal>
+          </Flex>
+
           {children}
         </Flex>
       </Box>

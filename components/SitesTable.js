@@ -1,4 +1,8 @@
+import NextLink from 'next/link';
+import { format, parseISO } from 'date-fns';
+import { uniqueId } from 'lodash';
 import { Thead, Tbody, Table, Link } from '@chakra-ui/react';
+
 import { Th, Td, Tr } from './Table';
 
 const SitesTable = ({ sites }) => {
@@ -19,15 +23,19 @@ const SitesTable = ({ sites }) => {
         </Tr>
       </Thead>
       <Tbody>
-        {Object.keys(sites).map((site) => (
-          <Tr key={site}>
-            <Td>{sites[site].name}</Td>
-            <Td>{sites[site].url}</Td>
+        {sites.map((site) => (
+          <Tr key={uniqueId()}>
+            <Td fontWeight="medium">{site.name}</Td>
+            <Td>{site.url}</Td>
             <Td>
-              <Link> View Feedback</Link>
+              <NextLink href={`/feedbacks/${site.id}`}>
+                <Link color="blue.400" _hover={{ color: 'blue.600' }}>
+                  View Feedback
+                </Link>
+              </NextLink>
             </Td>
 
-            <Td>{sites[site].createdAt}</Td>
+            <Td>{format(parseISO(site.createdAt), 'PPpp')}</Td>
           </Tr>
         ))}
       </Tbody>

@@ -9,8 +9,9 @@ export default function Home() {
   const auth = useAuth();
   const router = useRouter();
 
-  const handleSignIn = () => {
-    auth.signinWithGithub();
+  const handleSignIn = async () => {
+    const authRes = await auth.signinWithGithub();
+
     router.push('/dashboard');
   };
 
@@ -18,6 +19,13 @@ export default function Home() {
     <div>
       <Head>
         <title>Fast feedback</title>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if (document.cookie && document.cookie.includes('fast-feedback-auth')) {
+          window.location.href = "/dashboard"
+        }`
+          }}
+        />
       </Head>
       <Flex
         as="main"
@@ -29,14 +37,25 @@ export default function Home() {
         <Heading> Fast Feedback</Heading>
         <Icons.logo color="red" boxSize="2rem" />
 
-        <Button
-          variant="ghost"
-          size="sm"
-          colorScheme="teal"
-          onClick={handleSignIn}
-        >
-          Signin
-        </Button>
+        {auth.user ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            colorScheme="teal"
+            onClick={() => router.push('/dashboard')}
+          >
+            View dashboard
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            colorScheme="teal"
+            onClick={handleSignIn}
+          >
+            Signin
+          </Button>
+        )}
       </Flex>
     </div>
   );

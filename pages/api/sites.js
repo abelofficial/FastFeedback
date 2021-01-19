@@ -1,11 +1,12 @@
 import cors from 'cors';
 import nc from 'next-connect';
 
-import db from '@lib/firebaseAdmin';
+import { db, auth } from '@lib/firebaseAdmin';
+import { getAllSites } from '@lib/admin-db';
 
 const onError = (err, req, res, next) => {
   console.log(err);
-  res.status(500).json({ message: 'Something went wrong. Please try again.' });
+  res.status(500).json({ error: err });
 };
 
 const onNoMatch = (req, res, next) => {
@@ -14,13 +15,14 @@ const onNoMatch = (req, res, next) => {
 const handler = nc({ onNoMatch, onError })
   .use(cors())
   .get(async (req, res) => {
-    const snapshot = await db.collection('sites').get();
-    const sitesData = {};
-    snapshot.forEach((doc) => {
-      sitesData[doc.id] = doc.data();
-    });
-
-    res.status(200).json(sitesData);
+    try {
+      const { authorization } = req.headers;
+      const { uid } = await auth.verifyIdToken(authorization);
+      const sites = await getAllSites(uid);
+      res.status(200).json(sites);
+    } catch (error) {
+      res.status(401).json({ error });
+    }
   });
 
 export default handler;

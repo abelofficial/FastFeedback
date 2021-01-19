@@ -1,7 +1,5 @@
-import { Text } from '@chakra-ui/react';
-
 import useSWR from 'swr';
-
+import _ from 'lodash';
 import { useAuth } from '@lib/auth';
 import EmptyState from '@components/EmptyState';
 import fetcher from '@utils/fetcher';
@@ -10,11 +8,9 @@ import DashboardShell from '@components/DashboardShell';
 import SitesTable from '@components/SitesTable';
 
 export default function Dashboard() {
-  const auth = useAuth();
+  const { user } = useAuth();
 
-  const { data, error } = useSWR('/api/sites', fetcher);
-
-  console.log(data);
+  const { data } = useSWR(user ? ['/api/sites', user?.token] : null, fetcher);
 
   if (!data) {
     return (
@@ -23,9 +19,14 @@ export default function Dashboard() {
       </DashboardShell>
     );
   }
+
   return (
     <DashboardShell>
-      <SitesTable sites={data} />
+      {_.isEmpty(data.sites) ? (
+        <EmptyState />
+      ) : (
+        <SitesTable sites={data.sites} />
+      )}
     </DashboardShell>
   );
 }

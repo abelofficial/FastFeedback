@@ -18,6 +18,8 @@ export const Th = (props) => {
     <Text
       as="th"
       textTransform="uppercase"
+      color="gray.600"
+      backgroundColor="gray.200"
       fontSize="xs"
       fontWeight="medium"
       px={4}
