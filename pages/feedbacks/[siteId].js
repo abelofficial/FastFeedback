@@ -35,9 +35,9 @@ export async function getStaticProps(context) {
   return {
     props: {
       initialFeedbacks: feedbacks
-    },
-    unstable_revalidation: 1
+    }
   };
+  unstable_revalidation: 1;
 }
 
 const SiteFeedback = ({ initialFeedbacks }) => {
