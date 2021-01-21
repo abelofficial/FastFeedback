@@ -28,14 +28,14 @@ const AddSiteModal = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { handleSubmit, register, errors } = useForm();
 
-  const onCreateSite = ({ name, url }) => {
+  const onCreateSite = async ({ name, url }) => {
     const newSite = {
       authorId: auth.user.uid,
       createdAt: new Date().toISOString(),
       name,
       url
     };
-    CreateSite(newSite);
+    const { id } = await CreateSite(newSite);
 
     toast({
       title: 'Site created.',
@@ -48,7 +48,7 @@ const AddSiteModal = ({ children }) => {
     mutate(
       ['/api/sites', auth.user.token],
       async (data) => {
-        return { sites: [...data.sites, newSite] };
+        return { sites: [{ id, ...newSite }, ...data.sites] };
       },
       false
     );

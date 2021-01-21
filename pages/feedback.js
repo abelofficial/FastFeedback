@@ -1,22 +1,28 @@
 import useSWR from 'swr';
 import _ from 'lodash';
+
 import { useAuth } from '@lib/auth';
 import EmptyState from '@components/EmptyState';
 import fetcher from '@utils/fetcher';
 import SitesTableSkeleton from '@components/SitesTableSkeleton';
 import DashboardShell from '@components/DashboardShell';
-import SitesTable from '@components/SitesTable';
-import SiteHeader from '@components/SiteHeader';
+import FeedbackTable from '@components/FeedbackTable';
+import FeedbackHeader from '@components/FeedbackHeader';
 
-const Dashboard = () => {
+const Feedback = () => {
   const { user } = useAuth();
 
-  const { data } = useSWR(user ? ['/api/sites', user?.token] : null, fetcher);
+  const { data } = useSWR(
+    user ? ['/api/feedback', user?.token] : null,
+    fetcher
+  );
+
+  console.log(data);
 
   if (!data) {
     return (
       <DashboardShell>
-        <SiteHeader />
+        <FeedbackHeader />
         <SitesTableSkeleton />
       </DashboardShell>
     );
@@ -24,14 +30,14 @@ const Dashboard = () => {
 
   return (
     <DashboardShell>
-      <SiteHeader />
-      {_.isEmpty(data.sites) ? (
+      <FeedbackHeader />
+      {_.isEmpty(data.feedbacks) ? (
         <EmptyState />
       ) : (
-        <SitesTable sites={data.sites} />
+        <FeedbackTable feedbacks={data.feedbacks} />
       )}
     </DashboardShell>
   );
 };
 
-export default Dashboard;
+export default Feedback;

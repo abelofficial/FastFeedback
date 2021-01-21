@@ -1,25 +1,17 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import {
-  ChakraProvider,
   Box,
   Flex,
   Stack,
-  Icon,
   Link,
   Avatar,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Heading,
-  Text,
   Button,
   SkeletonCircle
 } from '@chakra-ui/react';
 
-import * as Icons from '@components/icons';
+import { Logo } from '@components/Icons';
 import { useAuth } from '@lib/auth';
-import AddSiteModal from './AddSiteModal';
 const DashboardShell = ({ children }) => {
   const auth = useAuth();
   const router = useRouter();
@@ -38,9 +30,13 @@ const DashboardShell = ({ children }) => {
         p={4}
       >
         <Stack spacing={4} display="block" isInline>
-          <Icons.logo boxSize="1.5rem" />
-          <Link fontWeight="medium">Feedback</Link>
-          <Link fontWeight="medium">Sites</Link>
+          <Logo boxSize="1.5rem" />
+          <Link href="/dashboard" fontWeight="medium">
+            Sites
+          </Link>
+          <Link href="/feedback" fontWeight="medium">
+            Feedback
+          </Link>
         </Stack>
         <Stack spacing={4} isInline justifyContent="center" alignItems="center">
           <Button
@@ -58,20 +54,8 @@ const DashboardShell = ({ children }) => {
           )}
         </Stack>
       </Flex>
-      <Box backgroundColor="gray.100" width="100%" height="100vh">
+      <Box backgroundColor="gray.100" width="100%" minHeight="100vh">
         <Flex direction="column" pt={8} pb={16} width="80%" ml="auto" mr="auto">
-          <Breadcrumb>
-            <BreadcrumbItem fontSize="sm">
-              <BreadcrumbLink color="gray.500">Sites</BreadcrumbLink>
-            </BreadcrumbItem>
-          </Breadcrumb>
-          <Flex direction="row" justify="space-between">
-            <Heading size="xl" mb={8} display="inline">
-              My Sites
-            </Heading>
-            <AddSiteModal> Add site </AddSiteModal>
-          </Flex>
-
           {children}
         </Flex>
       </Box>

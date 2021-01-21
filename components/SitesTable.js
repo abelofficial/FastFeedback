@@ -24,7 +24,7 @@ const SitesTable = ({ sites }) => {
       </Thead>
       <Tbody>
         {sites.map((site) => (
-          <Tr key={uniqueId()}>
+          <Tr key={site.id}>
             <Td fontWeight="medium">{site.name}</Td>
             <Td>{site.url}</Td>
             <Td>

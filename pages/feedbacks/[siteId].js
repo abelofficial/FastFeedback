@@ -35,9 +35,9 @@ export async function getStaticProps(context) {
   return {
     props: {
       initialFeedbacks: feedbacks
-    }
+    },
+    revalidate: 1
   };
-  unstable_revalidation: 1;
 }
 
 const SiteFeedback = ({ initialFeedbacks }) => {
@@ -46,7 +46,7 @@ const SiteFeedback = ({ initialFeedbacks }) => {
   const router = useRouter();
   const auth = useAuth();
 
-  const onCreateFeedback = (e) => {
+  const onCreateFeedback = async (e) => {
     e.preventDefault();
 
     const newFeedback = {
@@ -60,9 +60,10 @@ const SiteFeedback = ({ initialFeedbacks }) => {
       text: inputText.current.value
     };
 
-    setFeedbacks((preValue) => [newFeedback, ...preValue]);
-    CreateFeedback(newFeedback);
+    const { id } = await CreateFeedback(newFeedback);
+    setFeedbacks([{ id, ...newFeedback }, ...feedbacks]);
   };
+  console.log(feedbacks);
   return (
     <Box
       display="flex"
@@ -82,9 +83,7 @@ const SiteFeedback = ({ initialFeedbacks }) => {
       </Box>
 
       {feedbacks.map((feedback) => (
-        <Feedback key={uniqueId()} {...feedback}>
-          {initialFeedbacks[0].author}
-        </Feedback>
+        <Feedback key={feedback.id} {...feedback} />
       ))}
     </Box>
   );
